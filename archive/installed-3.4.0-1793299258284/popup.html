@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>e-typing Key Remapper</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h2>⌨️ Key Remapper</h2>
+      <label class="switch">
+        <input type="checkbox" id="enabled" checked>
+        <span class="slider"></span>
+      </label>
+    </div>
+
+    <div class="hint" style="color:#e2e8f0; line-height:1.4;">
+      <b>Chế độ gõ tay 100%:</b> Extension không tự động gõ. Khi bạn bấm <b>bất kỳ phím nào</b> trên bàn phím, nó sẽ tự nắn phím đó thành ký tự đúng tiếp theo để gửi cho web.
+    </div>
+
+    <div class="control-group">
+      <div class="label-row">
+        <label for="accuracy">Độ chính xác (Accuracy):</label>
+        <span class="value"><span id="accuracyVal">100</span>%</span>
+      </div>
+      <input type="range" id="accuracy" min="80" max="100" step="1" value="100">
+      <div class="hint">Chỉnh &lt; 100% nếu muốn thỉnh thoảng giả vờ gõ sai.</div>
+    </div>
+
+    <div class="control-group checkbox-row">
+      <label for="showHud">Hiển thị bảng trạng thái (HUD) trên web</label>
+      <input type="checkbox" id="showHud" checked>
+    </div>
+
+    <!-- Automatic operation information; original controls remain unchanged. -->
+    <div class="control-group" id="automationInfo">
+      <div class="hint" id="extensionVersion">Tự khởi động cùng bài tập</div>
+      <div class="hint" id="browserShortcut">Bật/tắt từ Chrome: Alt + Shift + K</div>
+      <button id="shortcutSettings" type="button" style="padding:6px 8px;background:#1e293b;color:#e2e8f0;border:1px solid #334155;border-radius:6px;cursor:pointer;">Đổi phím tắt trình duyệt</button>
+    </div>
+
+    <div class="footer">
+      Phím tắt bật/tắt nhanh: <kbd>Alt + S</kbd> hoặc <kbd>F8</kbd>
+    </div>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>

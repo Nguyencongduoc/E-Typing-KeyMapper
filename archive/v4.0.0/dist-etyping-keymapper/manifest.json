@@ -1,0 +1,28 @@
+{
+  "manifest_version": 3,
+  "name": "e-typing KeyMapper",
+  "version": "4.0.0",
+  "description": "Đổi phím gõ thành ký tự Romaji đúng trên e-typing, theo nhịp bấm thực tế của bạn.",
+  "minimum_chrome_version": "111",
+  "permissions": ["storage"],
+  "background": { "service_worker": "background.js" },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "e-typing KeyMapper"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://www.e-typing.ne.jp/app/jsa_std/typing.asp*", "https://e-typing.ne.jp/app/jsa_std/typing.asp*"],
+      "js": ["core.js", "etyping-adapter.js", "injected.js"],
+      "world": "MAIN",
+      "run_at": "document_start",
+      "all_frames": true
+    },
+    {
+      "matches": ["https://www.e-typing.ne.jp/app/jsa_std/typing.asp*", "https://e-typing.ne.jp/app/jsa_std/typing.asp*"],
+      "js": ["core.js", "content.js"],
+      "run_at": "document_start",
+      "all_frames": true
+    }
+  ]
+}

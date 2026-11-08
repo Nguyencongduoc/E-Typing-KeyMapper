@@ -1,0 +1,7 @@
+{
+  "name": "etyping-keymapper",
+  "private": true,
+  "version": "4.0.0",
+  "description": "Manual-cadence Romaji remapper for e-typing",
+  "scripts": { "test": "node --test", "check": "node scripts/check.cjs", "package": "node scripts/package.cjs" }
+}

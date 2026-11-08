@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="vi">
+<head><meta charset="utf-8"><title>KeyMapper · Browser verification</title>
+<style>body{font:16px system-ui;background:#0d1420;color:#edf3fa;padding:28px;max-width:850px;margin:auto}button,input{font:inherit;padding:9px;margin:4px}#app{border:1px solid #52627c;border-radius:10px;padding:24px;margin:16px 0}#sentenceText{font:32px monospace;letter-spacing:3px}.entered{color:#75e0b1}pre{white-space:pre-wrap;font:13px monospace;background:#152132;padding:16px}small{color:#a9b9cc}</style>
+<script src="/core.js"></script><script src="/etyping-adapter.js"></script><script src="/injected.js"></script><script src="/tests/browser.js" defer></script>
+</head>
+<body>
+<h1>Kiểm tra sự kiện bàn phím thật</h1>
+<p>Fixture cục bộ dùng cùng lõi và adapter. Chấm ở keypress như mã game đã đối chiếu.</p>
+<div><button id="start">Bài NEKO</button><button id="symbols">Bài dấu câu</button><button id="toggle">Bật / tắt</button><button id="repeat">Đổi chế độ giữ phím</button><button id="replace">Thay node app</button></div>
+<div id="app"><div id="example_container"><div id="kanaText">ねこ</div><div id="sentenceText"><div><span class="entered"></span><span>NEKO</span></div></div></div></div>
+<input id="ordinary" placeholder="Ô nhập bình thường — không được remap">
+<p id="accepted">Đã nhận: </p><p id="errors">Lỗi: 0</p><p id="timing">Khoảng cách sự kiện: </p>
+<pre id="report">Đang kết nối…</pre>
+<small>Không phải bài e-typing thật. Test này xác minh sửa KeyboardEvent/isTrusted, nhịp bấm, trạng thái và DOM bằng Chromium thực.</small>
+</body></html>

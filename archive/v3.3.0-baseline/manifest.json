@@ -1,0 +1,48 @@
+{
+  "manifest_version": 3,
+  "name": "e-typing Key Remapper (Gõ phím bất kỳ -> Ký tự đúng)",
+  "version": "3.3.0",
+  "description": "Chỉ hoạt động khi bạn gõ phím: tự động đổi mọi phím bạn bấm trên bàn phím thành ký tự đúng tiếp theo trên e-typing.ne.jp.",
+  "permissions": [
+    "storage",
+    "scripting",
+    "webNavigation"
+  ],
+  "host_permissions": [
+    "*://*.e-typing.ne.jp/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "e-typing Key Remapper"
+  },
+  "background": { "service_worker": "background.js" },
+  "commands": {
+    "toggle-keymapper": {
+      "suggested_key": { "default": "Alt+Shift+K" },
+      "description": "Bật/tắt e-typing Key Mapper"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "*://*.e-typing.ne.jp/*"
+      ],
+      "js": [
+        "injected.js"
+      ],
+      "all_frames": true,
+      "run_at": "document_start",
+      "world": "MAIN"
+    },
+    {
+      "matches": [
+        "*://*.e-typing.ne.jp/*"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "all_frames": true,
+      "run_at": "document_start"
+    }
+  ]
+}

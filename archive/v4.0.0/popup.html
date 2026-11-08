@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>e-typing KeyMapper</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <header>
+    <div class="brand-icon" aria-hidden="true">⌨</div>
+    <div><h1>KeyMapper</h1><p class="eyebrow">E-TYPING · ROMAJI</p></div>
+    <span class="version">v4.0</span>
+  </header>
+  <main>
+    <section class="hero">
+      <div class="switch-row">
+        <div><h2>Hỗ trợ tab này</h2><p>Mỗi lần bấm, một ký tự đúng.</p></div>
+        <label class="switch"><input id="enabled" type="checkbox" aria-label="Bật hỗ trợ cho tab này" disabled><span></span></label>
+      </div>
+      <div id="status" class="status" role="status"><span id="dot" class="dot"></span><span id="statusText">Đang kết nối…</span></div>
+      <p id="detail" class="detail">Nhịp gõ theo bàn phím của bạn.</p>
+    </section>
+    <section class="metrics" aria-label="Thống kê phiên trong frame bài hiện tại">
+      <div><strong id="presses">0</strong><span>Lượt bấm</span></div>
+      <div><strong id="kpm">0</strong><span>KPM bấm</span></div>
+      <div><strong id="correction">0%</strong><span>Cần chuyển</span></div>
+    </section>
+    <p class="metric-note">Số liệu các phím đã ánh xạ; tách với KPM của game.</p>
+    <section class="options" aria-label="Tùy chọn">
+      <label class="option"><span><b>Hiện HUD trong bài</b><small>Xem phím thật và ký tự đã chuyển</small></span><input id="showHud" type="checkbox"></label>
+      <label class="option"><span><b>Cho phép giữ phím</b><small>Nhận nhịp lặp từ hệ điều hành</small></span><input id="allowRepeat" type="checkbox"></label>
+      <label class="option"><span><b>Mặc định bật ở tab mới</b><small>Tab hiện tại có công tắc riêng</small></span><input id="defaultEnabled" type="checkbox"></label>
+      <label class="option shortcut"><span><b>Phím tắt trong bài</b></span><select id="shortcut"><option value="F8">F8</option><option value="AltS">Alt + S</option><option value="None">Không dùng</option></select></label>
+    </section>
+    <div class="actions"><button id="reset" disabled>Đặt lại số liệu</button><button id="export" disabled>Xuất JSON</button><button id="followDefault" disabled>Theo mặc định</button></div>
+    <p id="feedback" class="feedback" role="status" aria-live="polite"></p>
+    <footer><span class="live-dot"></span> Chỉ tiến bài khi bạn bấm phím.</footer>
+  </main>
+  <script src="core.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>
