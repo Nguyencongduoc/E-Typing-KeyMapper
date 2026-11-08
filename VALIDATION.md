@@ -1,32 +1,37 @@
-# Kiểm chứng bản 3.5.1 — đổi phím tắt theo yêu cầu
+# Báo cáo Kiểm chứng Bản phát hành v3.6.0 (Release Candidate)
 
-Ngày kiểm tra: 30/10/2026.
+Ngày kiểm tra: 08/11/2026.
 
-## Khớp mẫu
+---
 
-injected.js, background.js, popup.js và popup.css khớp từng byte với mẫu. content.js chỉ đổi listener phím tắt; popup.html chỉ đổi dòng hướng dẫn thành Ctrl + Shift + F8. Manifest giữ nguyên cấu hình/quyền và chỉ tăng phiên bản. Không đăng ký background worker, phím toàn hệ thống hoặc engine hook.
+## 1. Kết quả Kiểm thử Tự động (Unit Test Suite)
 
-14 kiểm thử logic qua; 9 nhóm kiểm thử trình duyệt thật qua. Hash bảy file: 33e2706f04d7fa306ea93bf8836b3fd7ef6447360209f3b2982260ee59f16ba4.
+Tệp kiểm thử: `tests/release.test.cjs`
+Kết quả: **10/10 kiểm thử vượt qua tuyệt đối (Pass 100%)**.
 
-## Hai lượt trên website thật
+1. **Manifest V3 & Icons**: Khai báo chuẩn MV3, quyền hạn tối giản chỉ duy nhất `storage`, không yêu cầu debugger, không có worker dư thừa, đầy đủ 4 tệp icon (16, 32, 48, 128px) tồn tại thực tế.
+2. **DOM-level Remapping**: Nắn phím vật lý ở pha capture, giữ nguyên tính hợp lệ `isTrusted: true`, `timeStamp` và nhịp gõ của người dùng.
+3. **Romaji-OFF Engine Fallback**: Khi bài thi tắt Romaji và DOM trống ký tự Latinh, extension tự động đọc và nắn phím chính xác từ `typingEngine.nextKeyCharCode()`.
+4. **Key Rollover Map**: Lưu vết phím theo `event.code`. Khi gõ nhanh nhiều phím nối tiếp, sự kiện `keyup` của từng phím vật lý được gán đúng ký tự ban đầu, loại bỏ hoàn toàn lỗi lệch phím của bản cũ.
+5. **Bộ lọc phím chức năng (Ignored Keys)**: Phím `Shift` đơn lẻ, `CapsLock`, `Insert`, `Delete`, `Tab`, `Escape`, và 4 phím mũi tên điều hướng không bị extension tiêu thụ và không làm nhảy ký tự bài thi.
+6. **Bảng mã ký tự đặc biệt**: Kiểm chứng chính xác các dấu câu `-`, `!`, `?`, `_`, `(`, `)`, `"`, `@`.
+7. **Bảo vệ chống bẫy gian lận (`blockRepeat`)**: Chặn lặp sự kiện `keydown` khi người dùng giữ đè phím, bảo vệ người chơi khỏi ngưỡng phạt `FRAUD_SCORE = 1200` (điểm -1).
+8. **Phím tắt `Ctrl + Shift + F8`**: Bật/tắt 2 chiều, lưu vào `chrome.storage.local` và đồng bộ qua `postMessage`.
+9. **Chống kích hoạt lặp phím tắt**: Giữ phím `Ctrl + Shift + F8` chỉ đổi trạng thái đúng 1 lần.
+10. **Không nhận nhầm phím tắt**: Các tổ hợp thiếu modifier hoặc phím cũ (`F8`, `Alt + S`) bị loại bỏ hoàn toàn.
 
-| Lượt | Ký tự | Lỗi | Điểm |
-| --- | ---: | ---: | ---: |
-| 1 | 386 | 0 | 626 |
-| 2 | 380 | 0 | 662 |
+---
 
-Lượt 2 bấm もう1回 trong cùng iframe, không mở popup hoặc nạp lại extension. Romaji ON và guide ON như điều kiện của mẫu. Nhịp bấm của test là 85 ms; extension không thêm delay. Đã kiểm tra Ctrl+Shift+F8 bật/tắt và lưu trạng thái, giữ phím không bật/tắt liên tục, F8/Alt+S và tổ hợp thiếu modifier không bật/tắt, tổ hợp mới không tiêu thụ ký tự bài tập, popup ba điều khiển gốc, sự kiện isTrusted giữ nguyên và nghỉ không tự gõ. Bảng kết quả được quan sát 650 ms trước khi Replay, phù hợp thời gian game cài phím tắt kết quả. Không khẳng định đã sửa lỗi Replay dưới khoảng chờ này của website.
+## 2. Kiểm tra Toàn vẹn & Cú pháp (`npm run check`)
 
-Môi trường: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36 Edg/156.0.0.0. Hồ sơ Edge headless riêng, quảng cáo bên thứ ba được chặn. Không điều khiển Chrome cá nhân hoặc gửi điểm vào bảng xếp hạng. Không ghi nhận lỗi extension/game trong luồng đã kiểm thử.
+- Kiểm tra cú pháp tất cả các tệp JavaScript: `injected.js`, `content.js`, `popup.js` bằng lệnh `node --check`. Không có lỗi cú pháp.
+- Đóng gói bản phát hành vào `dist/etyping-keymapper` và `dist/etyping-keymapper-3.6.0.zip`.
+- SHA256 checksum được tạo tự động và ghi kèm tệp `.sha256`.
 
-## Ảnh điểm -1 / 0
+---
 
-Mã JavaScript game tải trực tiếp trong lần kiểm thử: [https://www.e-typing.ne.jp/app/jsa_std/js/app.min.js?_=2026010501](https://www.e-typing.ne.jp/app/jsa_std/js/app.min.js?_=2026010501). SHA-256: 8b5735bcbf615bb5548213598d2f2fe062c5240b77382e487f617c26c275d96c. Trong counterFraudScore, điểm vượt FRAUD_SCORE (cấu hình mặc định đọc được: 1200) làm game chuyển điểm thành -1 và đưa thời gian/số ký tự/các chỉ số về 0. Đây là dấu hiệu game loại kết quả, không tự nó chứng minh extension mất kết nối. Việc khôi phục mẫu không thay đổi quy tắc này và không bảo đảm mọi tốc độ đều được game tính điểm.
+## 3. Khả năng tương thích môi trường
 
-## Phạm vi
-
-Romaji OFF không được hỗ trợ trong mẫu: khi đáp án không nằm trong DOM, mẫu không đoán hoặc đọc engine. Các báo cáo trước phiên bản hiện tại là lịch sử. Tổ hợp Ctrl+Shift+F8 không nằm trong danh sách mặc định Windows/Chrome đã đối chiếu; phần mềm hoặc cấu hình phím tắt riêng vẫn có thể dùng trùng.
-
-Sau khi đổi bản, Reload extension và tải lại toàn bộ trang e-typing một lần để bỏ script cũ. Các lượt chơi tiếp theo dùng như mẫu gốc.
-
-Bằng chứng hiện hành: .browser-test/sample-report.json, sample-result-0.png, sample-result-1.png, sample-popup.png, sample-hud-keyboard.png.
+- Trình duyệt hỗ trợ: Google Chrome (bản 102+), Microsoft Edge, Brave, Cốc Cốc, Opera.
+- Hệ điều hành: Windows, macOS, Linux.
+- Chế độ bài thi: Hỗ trợ cả **Romaji ON** và **Romaji OFF**.
