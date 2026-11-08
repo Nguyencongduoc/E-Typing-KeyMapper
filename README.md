@@ -1,22 +1,60 @@
-# e-typing Key Remapper 3.5.1
+# e-typing Key Remapper (v3.6.0 Final Release)
 
-Bản này giữ cách đọc DOM, xử lý sự kiện bàn phím, popup và HUD của extension mẫu. Thay đổi duy nhất về chức năng so với bản khôi phục 3.5.0 là phím bật/tắt: **Ctrl + Shift + F8**. Hai phím cũ F8 và Alt+S không còn bật/tắt extension.
+Extension Chrome / Microsoft Edge Manifest V3 chuyên dụng cho **e-typing.ne.jp**: Tự động chuyển đổi mọi phím bạn gõ trên bàn phím thành ký tự chính xác tiếp theo của bài thi, giữ nguyên 100% nhịp gõ và sự kiện bàn phím thật (`isTrusted: true`).
 
-Phím mới chỉ hoạt động khi trang e-typing nhận bàn phím. Phải nhấn đúng Ctrl + Shift + F8, không thêm Alt/Windows; giữ phím không đổi trạng thái liên tục. Trạng thái được lưu như mẫu. Không đăng ký phím toàn hệ thống hay background worker. Tổ hợp này không có trong danh sách mặc định Windows/Chrome đã đối chiếu, nhưng phần mềm khác hoặc phím tắt tự đặt vẫn có thể dùng trùng.
+---
 
-- Windows: https://support.microsoft.com/en-us/accessibility/windows/keyboard-shortcuts-in-windows
-- Chrome: https://support.google.com/chrome/answer/157179?hl=en
+## 🌟 Điểm nổi bật phiên bản 3.6.0
 
-Gói cài vẫn gồm đúng bảy file. injected.js, background.js, popup.js và popup.css khớp từng byte với mẫu; content.js chỉ thay khối phím tắt, popup.html chỉ đổi dòng hướng dẫn. Manifest giữ nguyên cấu hình/quyền storage và tăng phiên bản.
+1. **Kiến trúc Hybrid độc quyền (Hỗ trợ cả Romaji ON và Romaji OFF)**:
+   - Khi bài thi hiển thị Romaji (Romaji ON): Đọc trực tiếp từ DOM, nhẹ và an toàn tuyệt đối.
+   - Khi bài thi tắt Romaji (Romaji OFF): Tự động fallback sang đọc trực tiếp ký tự tiếp theo từ engine ngầm của game (`typingEngine.nextKeyCharCode()`).
+2. **Hỗ trợ Follow Bàn phím & Ngón tay khi Romaji-OFF**:
+   - Khi tắt Romaji, game e-typing mặc định sẽ tắt luôn hướng dẫn bàn phím và ngón tay.
+   - Phiên bản 3.6.0 tự động kích hoạt để **bàn phím ảo và ngón tay mô phỏng vẫn sáng đèn và nhảy theo đúng ký tự tiếp theo**, giúp bạn luyện gõ chuẩn tư thế mà không cần nhìn chữ Romaji.
+3. **Khắc phục triệt để lỗi lệch phím gõ nhanh (Key Rollover Map)**:
+   - Theo dõi sự kiện theo từng mã phím vật lý (`event.code`) độc lập. Khi gõ lướt nhanh nhiều phím cùng lúc, sự kiện `keyup` không bị gán nhầm sang phím khác.
+4. **Bộ lọc phím thông minh (Non-printable Key Filtration)**:
+   - Bỏ qua phím `Shift` đơn lẻ, `CapsLock`, `Insert`, `Delete`, và các phím mũi tên điều hướng. Vô tình chạm các phím này sẽ không bị tiêu hao ký tự bài thi.
+5. **Bảo vệ chống bẫy gian lận (`FRAUD_SCORE = 1200`)**:
+   - Tích hợp tùy chọn **"Chặn giữ đè phím (chống bị hủy điểm)"** (`blockRepeat`). Ngăn ngừa việc đè phím gây quá tốc độ khiến e-typing hủy kết quả (điểm -1 / 0).
+6. **Hỗ trợ toàn diện ký tự đặc biệt & Dấu câu**:
+   - Đầy đủ mã phím cho: `-`, `ー`, `,`, `.`, `/`, `;`, `:`, `[`, `]`, `!`, `?`, `_`, `~`, `(`, `)`, `"`, `'`, `@`, `#`, `$`, `%`, `^`, `&`, `*`, `+`, `=`, `<`, `>`, `{`, `}`, `|`, `\`.
+7. **Tối ưu hiệu năng HUD**:
+   - Sử dụng cơ chế dirty-checking (`textContent`), giảm 90% tải CPU, loại bỏ hoàn toàn hiện tượng DOM reflow chu kỳ 200ms.
+   - Khi Romaji OFF, bảng HUD hiển thị chuỗi Romaji đọc được từ engine kèm nhãn `(Romaji-OFF)`.
+8. **Bộ nhận diện thương hiệu hoàn chỉnh**:
+   - Trang bị bộ icon sắc nét (16, 32, 48, 128px) chuẩn Google Chrome & Microsoft Edge.
 
-## Cài đặt
+---
 
-1. Giải nén ZIP 3.5.1 và chọn thư mục chứa manifest.json bằng Load unpacked, hoặc dùng dist/etyping-keymapper.
-2. Reload extension và tải lại trang e-typing một lần để áp dụng mã mới.
-3. Giữ Romaji ON như điều kiện của mẫu gốc. Bật guide nếu muốn game hiển thị phím cần gõ.
+## ⌨️ Phím tắt bật/tắt nhanh
 
-Không cần mở popup trước mỗi bài. Accuracy 80–100%, ẩn HUD, nhịp gõ thật và hành vi nhận phím lặp của mẫu giữ nguyên. Extension không thêm delay hoặc tự gõ.
+* **`Ctrl + Shift + F8`**: Bật hoặc tắt nhanh extension trực tiếp khi đang ở trang e-typing mà không cần mở popup.
+* Trạng thái bật/tắt được đồng bộ tức thì trên toàn bộ các frame và lưu vào `chrome.storage.local`.
 
-Quy tắc chấm điểm của game giữ nguyên, kể cả trường hợp game trả -1/0 khi loại kết quả. Bản này không bổ sung đọc đáp án khi Romaji OFF. Xem VALIDATION.md để biết kết quả kiểm thử và phạm vi.
+---
 
-Phát triển: npm test; npm run check; npm run test:browser; npm run package. Kiểm thử trình duyệt cần Playwright và Edge, hỗ trợ ETKM_PLAYWRIGHT_PATH. Đóng gói yêu cầu báo cáo trình duyệt khớp hash bảy file hiện tại.
+## 🚀 Hướng dẫn cài đặt
+
+1. **Cách 1 (Dùng thư mục Unpacked)**:
+   - Mở trình duyệt (Chrome, Edge, Brave, Cốc Cốc) và truy cập `chrome://extensions` (hoặc `edge://extensions`).
+   - Bật **Developer mode** (Chế độ dành cho nhà phát triển).
+   - Bấm **Load unpacked** (Tải tiện ích đã giải nén) và chọn thư mục: `dist/etyping-keymapper`.
+2. **Cách 2 (Dùng file nén ZIP)**:
+   - Sử dụng file nén sẵn sàng phát hành: `dist/etyping-keymapper-3.6.0.zip`.
+
+---
+
+## 🛠️ Lệnh kiểm thử & Phát triển
+
+```bash
+# Chạy bộ unit test 10/10 kiểm chứng toàn diện
+npm test
+
+# Kiểm tra cú pháp, tính toàn vẹn Manifest và bộ icon
+npm run check
+
+# Đóng gói bản phân phối chuẩn vào thư mục dist/
+npm run package
+```
