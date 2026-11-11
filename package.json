@@ -1,7 +1,7 @@
 {
   "name": "etyping-keymapper",
   "private": true,
-  "version": "3.6.0",
+  "version": "3.6.1",
   "description": "Manual-cadence Romaji remapper for e-typing",
   "devDependencies": {
     "playwright": "1.62.1"

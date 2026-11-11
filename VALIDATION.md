@@ -1,4 +1,10 @@
-# Kiểm chứng bản sửa lỗi Romaji — 11/11/2026
+# Kiểm chứng phát hành v3.6.1 — 11/11/2026
+
+- Người dùng đã chạy thử và xác nhận bản sửa trước khi yêu cầu phát hành 3.6.1.
+- Phiên bản trong `manifest.json` và `package.json`: `3.6.1`.
+- Gói phát hành: `dist/etyping-keymapper-3.6.1.zip` kèm SHA256; đối chiếu 10 tệp trong ZIP với nguồn phát hành.
+
+## Kiểm chứng bản sửa lỗi Romaji
 
 - Nguyên nhân: ép `_isKBHandView` luôn trả về `true` khiến `correctKey` của e-typing gọi `highlight` và hiện cả phần romaji chưa gõ khi Romaji OFF.
 - Bản sửa chỉ bật cờ trong lúc gọi `_nextKeyActive`, sau đó khôi phục bằng `finally`. Các lần gán cờ của game vẫn hoạt động bình thường.

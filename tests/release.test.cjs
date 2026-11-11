@@ -10,7 +10,7 @@ const read = f => fs.readFileSync(path.join(root, f), 'utf8');
 test('manifest.json is valid MV3, has icons and minimal permissions', () => {
   const m = JSON.parse(read('manifest.json'));
   assert.equal(m.manifest_version, 3);
-  assert.equal(m.version, '3.6.0');
+  assert.equal(m.version, '3.6.1');
   assert.deepEqual(m.permissions, ['storage']);
   assert.ok(!m.permissions.includes('debugger'));
   assert.equal(m.background, undefined);

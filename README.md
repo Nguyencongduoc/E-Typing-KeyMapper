@@ -1,10 +1,16 @@
-# e-typing Key Remapper (v3.6.0 Final Release)
+# e-typing Key Remapper (v3.6.1)
 
 Extension Chrome / Microsoft Edge Manifest V3 chuyên dụng cho **e-typing.ne.jp**: Tự động chuyển đổi mọi phím bạn gõ trên bàn phím thành ký tự chính xác tiếp theo của bài thi, giữ nguyên 100% nhịp gõ và sự kiện bàn phím thật (`isTrusted: true`).
 
 ---
 
-## 🌟 Điểm nổi bật phiên bản 3.6.0
+## Bản sửa 3.6.1
+
+- Sửa lỗi gõ đúng khi Romaji OFF lại hiện toàn bộ romaji của câu, phát sinh ở bản 3.6.0.
+- Hướng dẫn bàn phím/ngón tay vẫn cập nhật theo ký tự tiếp theo; trạng thái hiển thị của game được khôi phục sau mỗi lần cập nhật.
+- Đã qua 13 kiểm thử tự động và được người dùng xác nhận sau khi chạy thử bản sửa.
+
+## 🌟 Tính năng
 
 1. **Kiến trúc Hybrid độc quyền (Hỗ trợ cả Romaji ON và Romaji OFF)**:
    - Khi bài thi hiển thị Romaji (Romaji ON): Đọc trực tiếp từ DOM, nhẹ và an toàn tuyệt đối.
@@ -43,7 +49,8 @@ Extension Chrome / Microsoft Edge Manifest V3 chuyên dụng cho **e-typing.ne.j
    - Bật **Developer mode** (Chế độ dành cho nhà phát triển).
    - Bấm **Load unpacked** (Tải tiện ích đã giải nén) và chọn thư mục: `dist/etyping-keymapper`.
 2. **Cách 2 (Dùng file nén ZIP)**:
-   - Sử dụng file nén sẵn sàng phát hành: `dist/etyping-keymapper-3.6.0.zip`.
+   - Tải `etyping-keymapper-3.6.1.zip` tại [GitHub Releases](https://github.com/Nguyencongduoc/E-Typing-KeyMapper/releases/tag/v3.6.1), hoặc dùng `dist/etyping-keymapper-3.6.1.zip` trong repository.
+   - Giải nén ZIP rồi chọn **Load unpacked** với thư mục chứa `manifest.json`. Tắt bản cũ và tải lại trang e-typing.
 
 ---
 

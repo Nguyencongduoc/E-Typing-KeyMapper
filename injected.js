@@ -1,5 +1,5 @@
 /**
- * e-typing Key Remapper (v3.6.0 Final Release)
+ * e-typing Key Remapper (v3.6.1)
  * Chạy trực tiếp trong MAIN world ở thời điểm document_start (trước khi script của e-typing chạy).
  * Không bao giờ tự động gõ!
  * Chỉ khi người dùng nhấn phím thật trên bàn phím (event.isTrusted === true),
