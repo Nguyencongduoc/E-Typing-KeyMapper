@@ -8,7 +8,7 @@ const manifest = JSON.parse(fs.readFileSync(path.join(root, 'manifest.json'), 'u
 
 // Verify manifest structure and permissions
 assert.equal(manifest.manifest_version, 3, 'Must be Manifest V3');
-assert.equal(manifest.version, '3.6.0', 'Version must be 3.6.0');
+assert.equal(manifest.version, '3.6.1', 'Version must be 3.6.1');
 assert.deepEqual(manifest.permissions, ['storage'], 'Permissions must strictly be ["storage"]');
 assert.ok(!manifest.permissions.includes('debugger'), 'Must not require debugger permission');
 assert.equal(manifest.background, undefined, 'Must not register unneeded background worker');

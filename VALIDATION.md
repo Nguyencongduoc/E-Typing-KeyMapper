@@ -1,3 +1,21 @@
+# Kiểm chứng phát hành v3.6.1 — 11/11/2026
+
+- Người dùng đã chạy thử và xác nhận bản sửa trước khi yêu cầu phát hành 3.6.1.
+- Phiên bản trong `manifest.json` và `package.json`: `3.6.1`.
+- Gói phát hành: `dist/etyping-keymapper-3.6.1.zip` kèm SHA256; đối chiếu 10 tệp trong ZIP với nguồn phát hành.
+
+## Kiểm chứng bản sửa lỗi Romaji
+
+- Nguyên nhân: ép `_isKBHandView` luôn trả về `true` khiến `correctKey` của e-typing gọi `highlight` và hiện cả phần romaji chưa gõ khi Romaji OFF.
+- Bản sửa chỉ bật cờ trong lúc gọi `_nextKeyActive`, sau đó khôi phục bằng `finally`. Các lần gán cờ của game vẫn hoạt động bình thường.
+- `npm test`: **13/13 kiểm thử đạt**. Kiểm thử hồi quy dùng các hàm hiển thị gốc của e-typing trong `tests/fixtures/etyping-view.cjs`, bao gồm gõ đúng liên tiếp, đổi câu, Romaji ON, trạng thái hiện chữ của game, bật/tắt hướng dẫn và khôi phục cờ khi lỗi.
+- Chạy cùng bộ kiểm thử với `injected.js` trước bản sửa: tái hiện lỗi phần chưa gõ `OKYO` xuất hiện sau khi gõ đúng `T` trong câu `TOKYO` ở chế độ Romaji OFF.
+- `npm run check`: đạt kiểm tra manifest, icon và cú pháp.
+- Phạm vi xác minh lần này: kiểm thử Node với các hàm hiển thị gốc; chưa chạy lại bài gõ trên trình duyệt trực tiếp.
+- Gói chạy thử: `dist/etyping-keymapper-3.6.0-romaji-fix.zip` (kèm SHA256). Đã đối chiếu cả 10 tệp trong ZIP với mã nguồn bằng SHA256. Gói `etyping-keymapper-3.6.0.zip` cũ chưa chứa bản sửa.
+
+---
+
 # Báo cáo Kiểm chứng Bản phát hành v3.6.0 (Release Candidate)
 
 Ngày kiểm tra: 08/11/2026.

@@ -10,7 +10,7 @@ const read = f => fs.readFileSync(path.join(root, f), 'utf8');
 test('manifest.json is valid MV3, has icons and minimal permissions', () => {
   const m = JSON.parse(read('manifest.json'));
   assert.equal(m.manifest_version, 3);
-  assert.equal(m.version, '3.6.0');
+  assert.equal(m.version, '3.6.1');
   assert.deepEqual(m.permissions, ['storage']);
   assert.ok(!m.permissions.includes('debugger'));
   assert.equal(m.background, undefined);
@@ -125,14 +125,126 @@ test('Romaji-OFF fallback: reads directly from typingEngine when DOM has no Roma
   r.window.jQuery = jq;
   r.window.jQuery.proxy(() => {}, mockView)();
 
-  // Verify that _isKBHandView is forced true to keep finger guide & keyboard active
-  assert.equal(mockView._isKBHandView, true, 'Visual guide flag _isKBHandView must be active');
+  // The guide must not change the flag used by the site to reveal Romaji.
+  assert.equal(mockView._isKBHandView, undefined, 'Native visual state must be preserved');
   assert.equal(guideActivated, true, '_nextKeyActive must be invoked for guide highlight');
 
   // Now press physical key 'x' -> must be remapped to 't' via engine!
   const e = r.key('keydown', { key: 'x', code: 'KeyX' });
   assert.equal(e.key, 't', 'Must remap to "t" from engine in Romaji-OFF mode');
   assert.equal(e.isTrusted, true);
+});
+
+function createNativeView(r, isRomaView = false) {
+  const native = require('./fixtures/etyping-view.cjs');
+  const highlights = [];
+  let index = 0;
+  let sentence = 'TOKYO';
+  const textNode = () => ({
+    value: '',
+    text(value) { if (value === undefined) return this.value; this.value = value; },
+    width() { return this.value.length; }
+  });
+  const sentenceView = {
+    _text: '', _enteredNode: textNode(), _notEnteredNode: textNode(),
+    _container: { empty() {} },
+    init(text) { this._text = text; this._enteredNode.text(''); this._notEnteredNode.text(text); },
+    scroll() {}, highlight: native.highlight, appendHighlightedText: native.appendHighlightedText
+  };
+  const view = {
+    _config: { isRomaView, isKBHGuide: true, IS_HAND: true, SCREEN_ALPHA_POINT: 500 },
+    _isKBHandView: isRomaView,
+    _typing: {
+      state: 'typing',
+      currentExample: () => '東京',
+      currentExampleSentence: () => sentence,
+      currentSentenceIndex: () => index,
+      nextKeyCharCode: () => sentence.charCodeAt(index),
+      nextKeyCode: () => sentence.charCodeAt(index),
+      getCurrentWPM: () => 200
+    },
+    _sentenceTextView: sentenceView,
+    _exampleTextView: { pxScroll() {}, init() {} },
+    _keyboard: { changeKeyState() {}, alpha: 1 },
+    _hands: { setHighlightedFinger(code) { highlights.push(code); }, removeHighlightedFinger() {} },
+    _prevKey: 0, _progressBar: null,
+    correctKey: native.correctKey,
+    exampleChangeComplete: native.exampleChangeComplete,
+    displayExample: native.displayExample,
+    displayExampleSentence: native.displayExampleSentence,
+    _nextKeyActive: native._nextKeyActive,
+    _prevKeyDeactive: native._prevKeyDeactive
+  };
+  r.sentence.value = '';
+  r.window.jQuery = { fn: {}, proxy: (fn, ctx) => fn.bind(ctx) };
+  const observe = () => r.window.jQuery.proxy(() => {}, view);
+  observe();
+  view.displayExample();
+  return {
+    view, sentenceView, highlights, observe,
+    accept() { index++; view.correctKey(); },
+    nextSentence() { index = 0; sentence = 'NEKO'; view.exampleChangeComplete(); }
+  };
+}
+
+test('Romaji OFF: correct input only reveals entered letters while native guides follow', () => {
+  const r = createInjectedRuntime();
+  const n = createNativeView(r);
+  // Site initialization assigns this flag after jQuery.proxy first observes the view.
+  n.view._isKBHandView = false;
+  const wrappedGuide = n.view._nextKeyActive;
+  n.observe();
+  assert.equal(n.view._nextKeyActive, wrappedGuide, 'Repeated proxy calls must not stack wrappers');
+  for (const entered of ['T', 'TO', 'TOK']) {
+    const e = r.key('keydown');
+    assert.equal(e.key, entered.at(-1).toLowerCase());
+    n.accept();
+    r.key('keyup');
+    assert.equal(n.sentenceView._enteredNode.text(), entered);
+    assert.equal(n.sentenceView._notEnteredNode.text(), '', 'Correct input must not reveal the rest of the sentence');
+    assert.equal(n.view._isKBHandView, false);
+    assert.equal(n.highlights.at(-1), 'TOKYO'.charCodeAt(entered.length));
+  }
+  n.nextSentence();
+  assert.equal(n.sentenceView._notEnteredNode.text(), '');
+  assert.equal(r.key().key, 'n');
+  n.accept();
+  assert.equal(n.sentenceView._enteredNode.text(), 'N');
+  assert.equal(n.sentenceView._notEnteredNode.text(), '');
+});
+
+test('Romaji ON and native reveal state keep their original rendering behavior', () => {
+  for (const isRomaView of [true, false]) {
+    const r = createInjectedRuntime();
+    const n = createNativeView(r, isRomaView);
+    // The game may enable the same flag after a wrong key in Romaji-OFF mode.
+    n.view._isKBHandView = true;
+    n.accept();
+    assert.equal(n.sentenceView._enteredNode.text(), 'T');
+    assert.equal(n.sentenceView._notEnteredNode.text(), 'OKYO');
+    assert.equal(n.view._isKBHandView, true);
+    n.nextSentence();
+    assert.equal(n.view._isKBHandView, isRomaView);
+    assert.equal(n.sentenceView._notEnteredNode.text(), isRomaView ? 'NEKO' : '');
+  }
+});
+
+test('Guide wrapper restores native state after errors and respects disabled remapping', () => {
+  const r = createInjectedRuntime();
+  const n = createNativeView(r);
+  const count = n.highlights.length;
+  r.config({ enabled: false });
+  n.view._nextKeyActive();
+  assert.equal(n.highlights.length, count);
+  r.config({ enabled: true });
+  n.view._config.isKBHGuide = false;
+  n.view._nextKeyActive();
+  assert.equal(n.highlights.length, count, 'The site guide preference must be respected');
+  assert.equal(n.view._isKBHandView, false);
+  n.view._config.isKBHGuide = true;
+  n.view._hands.setHighlightedFinger = () => { throw new Error('guide failed'); };
+  assert.throws(() => n.view._nextKeyActive(), /guide failed/);
+  assert.equal(n.view._isKBHandView, false);
 });
 
 test('Key rollover: tracks active keys independently by code to avoid mismatched keyup', () => {
