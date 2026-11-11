@@ -12,6 +12,7 @@ Extension Chrome / Microsoft Edge Manifest V3 chuyên dụng cho **e-typing.ne.j
 2. **Hỗ trợ Follow Bàn phím & Ngón tay khi Romaji-OFF**:
    - Khi tắt Romaji, game e-typing mặc định sẽ tắt luôn hướng dẫn bàn phím và ngón tay.
    - Phiên bản 3.6.0 tự động kích hoạt để **bàn phím ảo và ngón tay mô phỏng vẫn sáng đèn và nhảy theo đúng ký tự tiếp theo**, giúp bạn luyện gõ chuẩn tư thế mà không cần nhìn chữ Romaji.
+   - Bản sửa ngày 11/11/2026: gõ đúng khi Romaji OFF chỉ hiện phần đã gõ, không làm lộ toàn bộ câu. Cờ hiển thị của game được khôi phục ngay sau mỗi lần cập nhật hướng dẫn.
 3. **Khắc phục triệt để lỗi lệch phím gõ nhanh (Key Rollover Map)**:
    - Theo dõi sự kiện theo từng mã phím vật lý (`event.code`) độc lập. Khi gõ lướt nhanh nhiều phím cùng lúc, sự kiện `keyup` không bị gán nhầm sang phím khác.
 4. **Bộ lọc phím thông minh (Non-printable Key Filtration)**:
@@ -49,7 +50,7 @@ Extension Chrome / Microsoft Edge Manifest V3 chuyên dụng cho **e-typing.ne.j
 ## 🛠️ Lệnh kiểm thử & Phát triển
 
 ```bash
-# Chạy bộ unit test 10/10 kiểm chứng toàn diện
+# Chạy bộ unit test (13 kiểm thử)
 npm test
 
 # Kiểm tra cú pháp, tính toàn vẹn Manifest và bộ icon

@@ -95,16 +95,27 @@
      ========================================================================== */
   let typingEngine = null;
   let typingView = null;
+  const observedViews = new WeakSet();
 
   function activateKBHandGuide(view) {
     if (!view || typeof view._nextKeyActive !== 'function') return;
     try {
-      // Đảm bảo cờ _isKBHandView luôn trả về true để e-typing luôn bật đèn phím & ngón tay kể cả khi Romaji-OFF
-      Object.defineProperty(view, '_isKBHandView', {
-        get() { return true; },
-        set(_) {},
-        configurable: true
-      });
+      if (!observedViews.has(view)) {
+        const originalNextKeyActive = view._nextKeyActive;
+        view._nextKeyActive = function (...args) {
+          if (!config.enabled) return Reflect.apply(originalNextKeyActive, this, args);
+          // Cờ này còn điều khiển việc hiện cả câu trong correctKey/errorKey.
+          // Chỉ bật trong lúc cập nhật đèn phím, rồi trả lại trạng thái của game.
+          const isKBHandView = this._isKBHandView;
+          try {
+            this._isKBHandView = true;
+            return Reflect.apply(originalNextKeyActive, this, args);
+          } finally {
+            this._isKBHandView = isKBHandView;
+          }
+        };
+        observedViews.add(view);
+      }
       // Kích hoạt ngay đèn phím và ngón tay cho ký tự hiện tại nếu đang trong bài gõ
       if (view._typing && view._typing.state === 'typing') {
         view._nextKeyActive();
