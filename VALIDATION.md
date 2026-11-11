@@ -5,7 +5,8 @@
 - `npm test`: **13/13 kiểm thử đạt**. Kiểm thử hồi quy dùng các hàm hiển thị gốc của e-typing trong `tests/fixtures/etyping-view.cjs`, bao gồm gõ đúng liên tiếp, đổi câu, Romaji ON, trạng thái hiện chữ của game, bật/tắt hướng dẫn và khôi phục cờ khi lỗi.
 - Chạy cùng bộ kiểm thử với `injected.js` trước bản sửa: tái hiện lỗi phần chưa gõ `OKYO` xuất hiện sau khi gõ đúng `T` trong câu `TOKYO` ở chế độ Romaji OFF.
 - `npm run check`: đạt kiểm tra manifest, icon và cú pháp.
-- Phạm vi xác minh lần này: kiểm thử Node với các hàm hiển thị gốc; chưa chạy lại bài gõ trên trình duyệt trực tiếp. Các gói ZIP phát hành cũ trong `dist/` chưa được cập nhật.
+- Phạm vi xác minh lần này: kiểm thử Node với các hàm hiển thị gốc; chưa chạy lại bài gõ trên trình duyệt trực tiếp.
+- Gói chạy thử: `dist/etyping-keymapper-3.6.0-romaji-fix.zip` (kèm SHA256). Đã đối chiếu cả 10 tệp trong ZIP với mã nguồn bằng SHA256. Gói `etyping-keymapper-3.6.0.zip` cũ chưa chứa bản sửa.
 
 ---
 
